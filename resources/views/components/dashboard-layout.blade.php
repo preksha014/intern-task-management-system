@@ -2,19 +2,25 @@
     <div class="flex min-h-screen bg-gray-100">
         <!-- Sidebar -->
         <aside class="w-64 bg-gray-800 text-white flex-shrink-0">
-            <div class="p-6 text-xl font-bold border-b border-gray-700">
+            <a href="{{ route('admin.dashboard') }}" class="block p-6 text-2xl font-bold border-b border-gray-700 hover:bg-gray-700 transition duration-150">
                 Admin Panel
-            </div>
-            <nav class="mt-4 space-y-2">
-                <a href="{{ route('tasks.index') }}" class="block px-6 py-3 hover:bg-gray-700 transition">Tasks</a>
-                <a href="#" class="block px-6 py-3 hover:bg-gray-700 transition">Interns</a>
-                <a href="#" class="block px-6 py-3 hover:bg-gray-700 transition">Admins</a>
+            </a>
+            <nav class="mt-4">
+                <a href="{{ route('tasks.index') }}" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
+                    Tasks
+                </a>
+                <a href="{{ route('interns.index') }}" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
+                    Interns
+                </a>
+                <a href="#" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
+                    Admins
+                </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="flex-1 p-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
+            <div class="bg-white shadow rounded-lg p-6">
                 {{ $slot }}
             </div>
         </main>
