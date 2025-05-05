@@ -5,6 +5,7 @@ use App\Http\Controllers\Intern\Auth\LoginController as InternLoginController;
 use App\Http\Controllers\Intern\Auth\RegisterController as InternRegisterController;
 use App\Http\Controllers\Intern\TaskController as InternTaskController;
 use App\Http\Controllers\Intern\HomeController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/register', [InternRegisterController::class, 'showRegistrationForm'])->name('intern.register.form');
 Route::post('/register', [InternRegisterController::class, 'register'])->name('intern.register');
@@ -18,5 +19,9 @@ Route::middleware('auth:intern')->group(function () {
 
     Route::prefix('tasks')->group(function () {
         Route::get('/', [InternTaskController::class, 'index'])->name('intern.tasks.index');
+        
+        // Comment routes
+        Route::post('/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store');
+        Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
 });

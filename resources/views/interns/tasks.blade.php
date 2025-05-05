@@ -28,10 +28,26 @@
                             </p>
                             <p class="text-gray-500 mt-1 text-sm">Created at:
                                 {{ $task->created_at->format('M d, Y h:i A') }}</p>
+                            
+                            <!-- Comments Section -->
+                            <div class="mt-4 border-t pt-4">
+                                <h3 class="text-lg font-medium text-gray-700 mb-3">Comments</h3>
+                                @forelse($task->comments as $comment)
+                                    <div class="bg-white p-3 rounded-lg shadow-sm mb-2">
+                                        <p class="text-gray-700">{{ $comment->content }}</p>
+                                        <p class="text-gray-500 text-sm mt-1">By {{ $comment->user->name }} - {{ $comment->created_at->diffForHumans() }}</p>
+                                    </div>
+                                @empty
+                                    <p class="text-gray-500">No comments yet.</p>
+                                @endforelse
+                            </div>
                         </div>
                     @empty
                         <p class="text-gray-500">No tasks found.</p>
                     @endforelse
+                    <div>
+                        <a href="{{ route('intern.dashboard') }}">Back to Dashboard</a>
+                    </div>
                 </div>
             </div>
         </div>
