@@ -13,7 +13,7 @@ class Admin extends Model
         'user_id',
         'department',
         'position',
-        'is_super_admin',
+        // 'is_super_admin',
     ];
 
     // User relationship
