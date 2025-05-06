@@ -18,9 +18,4 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class);
     }
-
-    public function hasPermission($permission): bool
-    {
-        return $this->permissions()->where('name', $permission)->exists();
-    }
 }
