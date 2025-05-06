@@ -44,9 +44,9 @@ class RedirectIfAuthenticated
         } else if( in_array("admin", $guards)) {
             return route("admin.dashboard");
         }
-        // return static::$redirectToCallback
-        //     ? call_user_func(static::$redirectToCallback, $request)
-        //     : $this->defaultRedirectUri();
+        
+        // Default case when no specific guard is provided
+        return route("intern.dashboard");
     }
 
     /**

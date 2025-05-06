@@ -12,7 +12,7 @@
                 <a href="{{ route('interns.index') }}" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
                     Interns
                 </a>
-                <a href="#" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
+                <a href="{{ route('admins.index') }}" class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
                     Admins
                 </a>
             </nav>
