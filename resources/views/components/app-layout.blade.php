@@ -5,48 +5,43 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>{{ config('app.name', 'Task Management System') }}</title>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white border-b border-gray-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex-shrink-0 flex items-center">
-                        <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
-                                class="text-xl font-bold text-gray-800">
-                                Task Management System
-                            </a>
-                        </div>
+<body class="font-sans antialiased bg-gray-100 h-screen">
+    <div class="flex flex-col min-h-screen">
+        <!-- Navigation Bar -->
+        <nav class="bg-white shadow-md border-b border-gray-200">
+            <div class="max-w-full mx-auto px-6">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Left: App Logo -->
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.dashboard') }}" class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition">
+                            Task Management System
+                        </a>
                     </div>
 
-                    <div class="flex items-center">
-                        <div class="flex items-center ml-6">
-                            <div class="ml-3 relative">
-                                <span class="text-gray-800">{{ auth()->user()->name }}</span>
-                                <form method="POST"
-                                    action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('intern.logout') }}"
-                                    class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                        class="ml-4 text-sm text-red-600 hover:text-red-900">Logout</button>
-                                </form>
-                            </div>
-                        </div>
+                    <!-- Right: User Info -->
+                    <div class="flex items-center space-x-6">
+                        @auth
+                            <span class="text-gray-700 font-medium">{{ auth()->user()->name }}</span>
+                            <form method="POST"
+                                action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('intern.logout') }}">
+                                @csrf
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-medium transition">
+                                    Logout
+                                </button>
+                            </form>
+                        @endauth
                     </div>
                 </div>
             </div>
         </nav>
 
-        <main class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                {{ $slot }}
-            </div>
+        <!-- Page Content -->
+        <main class="flex-grow overflow-auto">
+            {{ $slot }}
         </main>
     </div>
 </body>

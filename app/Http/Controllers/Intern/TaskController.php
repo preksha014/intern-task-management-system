@@ -19,4 +19,9 @@ class TaskController extends Controller
         $tasks = $intern->tasks()->with(['comments.user'])->get();
         return view('interns.tasks', compact('tasks'));
     }
+    public function show(Task $task)
+    {
+        
+        return view('interns.task-details', compact('task'));
+    }
 }
