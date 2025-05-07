@@ -6,6 +6,7 @@ use App\Http\Controllers\Intern\Auth\RegisterController as InternRegisterControl
 use App\Http\Controllers\Intern\TaskController as InternTaskController;
 use App\Http\Controllers\Intern\HomeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ChatController;
 
 Route::middleware('guest:intern')->group(function () {
     Route::get('/register', [InternRegisterController::class,'showRegistrationForm'])->name('intern.register.form');
@@ -24,6 +25,9 @@ Route::middleware('auth:intern')->group(function () {
         Route::post('/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
+
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     
     Route::post('/logout', [InternLoginController::class, 'logout'])->name('intern.logout');
 });
