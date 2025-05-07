@@ -47,8 +47,10 @@
                                 <div class="bg-gray-50 p-4 rounded-lg">
                                     <div class="flex justify-between items-start">
                                         <div class="flex items-center">
+                                          
                                             <span class="text-sm font-medium text-gray-900">{{ $comment->user->name }}</span>
                                             <span class="text-sm text-gray-500 ml-2">{{ $comment->created_at->diffForHumans() }}</span>
+                                            
                                         </div>
                                         @if(Auth::id() === $comment->user_id || Auth::user()->admin)
                                             <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="inline">

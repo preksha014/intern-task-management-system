@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::with(['creator', 'interns'])->latest()->paginate(10);
+        $tasks = Task::with(['creator', 'interns'])->latest()->paginate(5);
         $interns = Intern::with('tasks')->get();
         return view('admin.tasks.index', compact('tasks', 'interns'));
     }
@@ -49,7 +49,8 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         $task->load(['creator', 'interns']);
-        return view('admin.tasks.show', compact('task'));
+        $roles=Auth::user()->roles;
+        return view('admin.tasks.show', compact('task','roles'));
     }
 
     public function edit(Task $task)

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\InternController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\CommentController;
 
 Route::prefix('admin')->group(function () {
 
@@ -19,7 +20,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/login', [LoginController::class, 'login'])->name('admin.login');
     });
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::prefix('tasks')->group(function () {
@@ -30,6 +31,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit')->can('manage-tasks');
             Route::patch('/{task}/update', [TaskController::class, 'update'])->name('tasks.update')->can('manage-tasks');
             Route::delete('/{task}/delete', [TaskController::class, 'destroy'])->name('tasks.destroy')->can('manage-tasks');
+            Route::post('/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store')->can('manage-tasks');
+            Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy')->can('manage-tasks');
         });
 
         Route::prefix('interns')->group(function () {
@@ -52,6 +55,7 @@ Route::prefix('admin')->group(function () {
             Route::patch('/{admin}/update', [AdminController::class, 'update'])->name('admins.update')->can('manage-admins');
             Route::delete('/{admin}/delete', [AdminController::class, 'destroy'])->name('admins.destroy')->can('manage-admins');
         });
+
         Route::prefix('roles')->group(function () {
             Route::get('/', [RoleController::class, 'index'])->name('roles.index')->can('manage-roles');
             Route::get('/create', [RoleController::class, 'create'])->name('roles.create')->can('manage-roles');
@@ -60,6 +64,7 @@ Route::prefix('admin')->group(function () {
             Route::patch('/{role}/update', [RoleController::class, 'update'])->name('roles.update')->can('manage-roles');
             Route::delete('/{role}/delete', [RoleController::class, 'destroy'])->name('roles.destroy')->can('manage-roles');
         });
+
         Route::prefix('permissions')->group(function () {
             Route::get('/', [PermissionController::class, 'index'])->name('permissions.index')->can('manage-permissions');
             Route::get('/create', [PermissionController::class, 'create'])->name('permissions.create')->can('manage-permissions');

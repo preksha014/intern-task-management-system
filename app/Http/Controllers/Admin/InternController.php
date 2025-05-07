@@ -11,7 +11,7 @@ class InternController extends Controller
 {
     public function index()
     {
-        $interns = Intern::paginate(10);
+        $interns = Intern::paginate(5);
         return view('admin.interns.index', compact('interns'));
     }
 
@@ -42,22 +42,18 @@ class InternController extends Controller
         return redirect()->route('interns.index')->with('success', 'Intern created successfully.');
     }
 
-    public function show($id)
+    public function show(Intern $intern)
     {
-        $intern = Intern::with('user')->findOrFail($id);
         return view('admin.interns.show', compact('intern'));
     }
 
-    public function edit($id)
+    public function edit(Intern $intern)
     {
-        $intern = Intern::with('user')->findOrFail($id);
         return view('admin.interns.edit', compact('intern'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Intern $intern)
     {
-        $intern = Intern::with('user')->findOrFail($id);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $intern->user->id,
@@ -76,9 +72,8 @@ class InternController extends Controller
         return redirect()->route('interns.index')->with('success', 'Intern updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Intern $intern)
     {
-        $intern = Intern::findOrFail($id);
         $user = $intern->user;
 
         $intern->delete();
@@ -88,7 +83,7 @@ class InternController extends Controller
     }
     public function assign()
     {
-        $tasks = Task::where('status', 'pending')->get();
+        $tasks = Task::whereIn('status', ['pending', 'in_progress'])->get();
         $interns = Intern::all();
         return view('admin.interns.assign', compact('tasks', 'interns'));
     }
@@ -97,13 +92,15 @@ class InternController extends Controller
     {
         $validated = $request->validate([
             'intern_id' => 'required|exists:interns,id',
-            'task_id' => 'required|exists:tasks,id'
+            'task_id' => 'required|array|min:1',
+            'task_id.*' => 'exists:tasks,id',
         ]);
 
-        $task = Task::find($validated['task_id']);
-        $task->interns()->attach($validated['intern_id']);
-        $task->update(['status' => 'in_progress']);
+        foreach ($validated['task_id'] as $taskId) {
+            $task = Task::find($taskId);
+            $task->interns()->attach($validated['intern_id']);
+        }
 
-        return redirect()->route('interns.index')->with('success', 'Task assigned successfully.');
+        return redirect()->route('interns.index')->with('success', 'Tasks assigned successfully.');
     }
 }

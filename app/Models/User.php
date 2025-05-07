@@ -36,10 +36,10 @@ class User extends Authenticatable
     }
 
     // Check if user has role
-    public function hasRole($role): bool
-    {
-        return $this->roles()->where('name', $role)->exists();
-    }
+    // public function hasRole($role): bool
+    // {
+    //     return $this->roles()->where('name', $role)->exists();
+    // }
 
     // Check if user has permission
     public function hasPermission($permission): bool
@@ -66,6 +66,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Admin::class);
     }
+    public function isSuperAdmin()
+    {
+        return $this->admin && $this->admin->isSuperAdmin();
+    }
 
     // Intern relationship
     public function intern()
@@ -86,14 +90,14 @@ class User extends Authenticatable
     }
 
     // Sent messages
-    public function sentMessages()
-    {
-        return $this->hasMany(Message::class, 'sender_id');
-    }
+    // public function sentMessages()
+    // {
+    //     return $this->hasMany(Message::class, 'sender_id');
+    // }
 
-    // Received messages
-    public function receivedMessages()
-    {
-        return $this->hasMany(Message::class, 'recipient_id');
-    }
+    // // Received messages
+    // public function receivedMessages()
+    // {
+    //     return $this->hasMany(Message::class, 'recipient_id');
+    // }
 }

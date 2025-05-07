@@ -13,7 +13,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $admins = Admin::paginate(10);
+        $admins = Admin::paginate(5);
         return view('admin.admins.index', compact('admins'));
     }
 
@@ -44,7 +44,7 @@ class AdminController extends Controller
         ]);
 
         // Create the corresponding admin record
-        $admin = Admin::create([
+        Admin::create([
             'user_id' => $user->id,
             'department' => $request->department,
             'position' => $request->position,
@@ -58,22 +58,19 @@ class AdminController extends Controller
         return redirect()->route('admins.index')->with('success', 'Admin created successfully');
     }
 
-    public function show($id)
+    public function show(Admin $admin)
     {
-        $admin = Admin::findOrFail($id);
         return view('admin.admins.show', compact('admin'));
     }
 
-    public function edit($id)
+    public function edit(Admin $admin)
     {
-        $admin = Admin::findOrFail($id);
         $roles = Role::all();
         return view('admin.admins.edit', compact('admin', 'roles'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Admin $admin)
     {
-        $admin = Admin::findOrFail($id);
         $user = User::findOrFail($admin->user_id);
 
         $request->validate([
@@ -105,9 +102,8 @@ class AdminController extends Controller
         return redirect()->route('admins.index')->with('success', 'Admin updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Admin $admin)
     {
-        $admin = Admin::findOrFail($id);
         $user = User::findOrFail($admin->user_id);
 
         // Detach roles from the user

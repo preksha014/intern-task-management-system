@@ -18,7 +18,7 @@
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <div class="flex-shrink-0 flex items-center">
-                            <a href="{{ auth()->guard('admin')->check() ? route('admin.dashboard') : route('intern.dashboard') }}"
+                        <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
                                 class="text-xl font-bold text-gray-800">
                                 Task Management System
                             </a>
@@ -30,7 +30,7 @@
                             <div class="ml-3 relative">
                                 <span class="text-gray-800">{{ auth()->user()->name }}</span>
                                 <form method="POST"
-                                    action="{{ auth()->guard('admin')->check() ? route('admin.logout') : route('intern.logout') }}"
+                                    action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('intern.logout') }}"
                                     class="inline">
                                     @csrf
                                     <button type="submit"

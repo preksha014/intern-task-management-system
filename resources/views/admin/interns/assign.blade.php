@@ -33,14 +33,14 @@
                         <!-- Task Selection -->
                         <div>
                             <label for="task_id" class="block text-sm font-medium text-gray-700">Select Task</label>
-                            <select name="task_id" id="task_id" required
+                            <select name="task_id[]" id="task_id" multiple required
                                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                <option value="">Select a task</option>
                                 @foreach($tasks as $task)
                                     <option value="{{ $task->id }}">{{ $task->title }} (Due:
                                         {{ $task->due_date->format('Y-m-d') }})</option>
                                 @endforeach
                             </select>
+
                             @error('task_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

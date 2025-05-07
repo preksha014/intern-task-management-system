@@ -14,10 +14,11 @@ class CommentController extends Controller
         $validated = $request->validate([
             'content' => 'required|string|max:1000',
         ]);
+        $user=Auth::guard('admin')->user();
 
-        $comment = Comment::create([
+        Comment::create([
             'task_id' => $task->id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'content' => $validated['content'],
         ]);
 
@@ -26,8 +27,9 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
+        $user=Auth::guard('admin')->user();
         // Only allow comment creator or admin to delete the comment
-        if (Auth::id() === $comment->user_id || Auth::user()->admin) {
+        if ($user->id === $comment->user_id ||$user->admin) {
             $comment->delete();
             return redirect()->back()->with('success', 'Comment deleted successfully.');
         }

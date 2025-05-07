@@ -15,7 +15,7 @@
         <div>
             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
             <div class="mt-1">
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                <input id="name" type="text" name="name" value="{{ old('name') }}"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             @error('name')
@@ -26,7 +26,7 @@
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
             <div class="mt-1">
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                <input id="email" type="email" name="email" value="{{ old('email') }}"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             @error('email')
@@ -37,7 +37,7 @@
         <div>
             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
             <div class="mt-1">
-                <input id="password" type="password" name="password" required
+                <input id="password" type="password" name="password"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             @error('password')
@@ -48,7 +48,7 @@
         <div>
             <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
             <div class="mt-1">
-                <input id="password_confirmation" type="password" name="password_confirmation" required
+                <input id="password_confirmation" type="password" name="password_confirmation"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
         </div>
@@ -56,7 +56,7 @@
         <div>
             <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
             <div class="mt-1">
-                <input id="department" type="text" name="department" value="{{ old('department') }}" required
+                <input id="department" type="text" name="department" value="{{ old('department') }}"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             </div>
             @error('department')

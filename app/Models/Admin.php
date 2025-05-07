@@ -13,7 +13,7 @@ class Admin extends Model
         'user_id',
         'department',
         'position',
-        // 'is_super_admin',
+        'is_super_admin',
     ];
 
     // User relationship
@@ -25,6 +25,6 @@ class Admin extends Model
     // Check if this admin is a super admin
     public function isSuperAdmin()
     {
-        return $this->is_super_admin === true;
+        return $this->is_super_admin === 1;
     }
 }
