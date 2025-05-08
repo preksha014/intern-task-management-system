@@ -9,8 +9,10 @@
                     </div>
                     <h2 class="ml-3 text-xl font-semibold">{{ $receiver->name }}</h2>
                 </div>
+                <div class="ml-auto">
+                    <a href="{{ route('intern.chat.index') }}" class="text-blue-500 hover:text-blue-700">Back to Chats</a>
+                </div>
             </div>
-
             <!-- Messages Container -->
             <div id="messages" class="h-96 overflow-y-auto p-4 space-y-4">
                 @foreach($messages as $message)

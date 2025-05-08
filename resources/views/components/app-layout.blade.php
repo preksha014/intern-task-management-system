@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <title>{{ config('app.name', 'Task Management System') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -17,7 +18,8 @@
                 <div class="flex justify-between items-center h-16">
                     <!-- Left: App Logo -->
                     <div class="flex items-center space-x-2">
-                        <a href="{{ route('admin.dashboard') }}" class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition">
+                        <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
+                            class="text-xl font-bold text-gray-800">
                             Task Management System
                         </a>
                     </div>
@@ -44,6 +46,8 @@
             {{ $slot }}
         </main>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="flex min-h-screen bg-gray-100">
+    <div class="flex min-h-screen bg-gray-100 overflow-hidden">
         <!-- Sidebar -->
         <aside class="w-64 bg-gray-900 text-white shadow-lg flex-shrink-0">
             <div class="p-6 border-b border-gray-700 text-2xl font-bold">
@@ -31,18 +31,15 @@
                         ⚙️ Permissions
                     </a>
                 @endcan
-
-                {{-- @can('manage-chats') --}}
                 <a href="{{ route('admin.chat.index') }}"
                     class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
-                    Chats
+                    💬 Chats
                 </a>
-                {{-- @endcan --}}
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 bg-gray-100">
+        <main class="flex-1 p-2 overflow-y-auto">
             {{ $slot }}
         </main>
     </div>

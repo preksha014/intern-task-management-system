@@ -53,7 +53,7 @@
                                             
                                         </div>
                                         @if(Auth::id() === $comment->user_id || Auth::user()->admin)
-                                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="inline">
+                                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="inline" id="admin-comment-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900 text-sm">

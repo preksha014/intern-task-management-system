@@ -1,14 +1,16 @@
-<x-app-layout>
+<x-dashboard-layout>
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg">
             <!-- Chat Header -->
-            
             <div class="p-4 border-b flex items-center">
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                         {{ substr($receiver->name, 0, 1) }}
                     </div>
                     <h2 class="ml-3 text-xl font-semibold">{{ $receiver->name }}</h2>
+                </div>
+                <div class="ml-auto">
+                    <a href="{{ route('admin.chat.index') }}" class="text-blue-500 hover:text-blue-700 ml-auto">Back to Chats</a>
                 </div>
             </div>
 
@@ -42,4 +44,4 @@
         const messagesDiv = document.getElementById('messages');
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     </script>
-</x-app-layout>
+</x-dashboard-layout>

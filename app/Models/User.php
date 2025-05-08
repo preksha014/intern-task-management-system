@@ -89,15 +89,4 @@ class User extends Authenticatable
         return $this->hasMany(Task::class, 'created_by');
     }
 
-    // Sent messages
-    // public function sentMessages()
-    // {
-    //     return $this->hasMany(Message::class, 'sender_id');
-    // }
-
-    // // Received messages
-    // public function receivedMessages()
-    // {
-    //     return $this->hasMany(Message::class, 'recipient_id');
-    // }
 }
