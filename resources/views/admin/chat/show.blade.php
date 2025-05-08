@@ -19,7 +19,7 @@
                         <div class="{{ $message->sender_id === auth()->id() ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black' }} rounded-lg px-4 py-2 max-w-sm">
                             <p class="text-sm">{{ $message->content }}</p>
                             <span class="text-xs block mt-1 {{ $message->sender_id === auth()->id() ? 'text-blue-100' : 'text-gray-500' }}">
-                                {{ $message->created_at->format('h:i A') }}
+                                {{ $message->created_at->diffForHumans() }}
                             </span>
                         </div>
                     </div>
