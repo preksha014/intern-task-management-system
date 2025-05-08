@@ -22,6 +22,7 @@ Route::middleware('auth:intern')->group(function () {
 
     Route::prefix('tasks')->group(function () {
         Route::get('/', [InternTaskController::class, 'index'])->name('intern.tasks.index');
+        Route::get('/{task}', [InternTaskController::class, 'show'])->name('intern.tasks.show');
         
         Route::post('/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
