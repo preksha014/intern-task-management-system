@@ -1,13 +1,24 @@
 <x-app-layout>
-    <div class="bg-gray-50 min-h-screen py-10">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <div class="flex justify-between items-center border-b pb-4 mb-4">
-                    <h1 class="text-3xl font-extrabold text-gray-900">Intern Dashboard</h1>
-                    <a href="{{ route('intern.tasks.index') }}"
-                       class="inline-flex items-center px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition">
-                        View Tasks
-                    </a>
+
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6 bg-white border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Intern Dashboard</h1>
+                
+                <!-- Restyled Tasks button positioned on the right -->
+                <a href="{{ route('intern.tasks.index') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-bold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-800 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                    Tasks
+                </a>
+                <a href="{{ route('intern.chat.index') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-bold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-800 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                    Chats
+                </a>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <!-- Example: Display a welcome message -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Welcome, {{ $intern->user->name }}!</h2>
+
                 </div>
 
                 <div class="space-y-6">

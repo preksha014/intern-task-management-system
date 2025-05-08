@@ -31,6 +31,13 @@
                         ⚙️ Permissions
                     </a>
                 @endcan
+
+                {{-- @can('manage-chats') --}}
+                <a href="{{ route('admin.chat.index') }}"
+                    class="block px-6 py-3 hover:bg-gray-700 transition duration-150">
+                    Chats
+                </a>
+                {{-- @endcan --}}
             </nav>
         </aside>
 
