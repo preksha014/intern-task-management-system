@@ -36,10 +36,10 @@ class User extends Authenticatable
     }
 
     // Check if user has role
-    // public function hasRole($role): bool
-    // {
-    //     return $this->roles()->where('name', $role)->exists();
-    // }
+    public function hasRole($role): bool
+    {
+        return $this->roles()->where('name', $role)->exists();
+    }
 
     // Check if user has permission
     public function hasPermission($permission): bool

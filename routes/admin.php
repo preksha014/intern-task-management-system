@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Admin\ChatController;
 
 Route::prefix('admin')->group(function () {
 
@@ -73,6 +74,10 @@ Route::prefix('admin')->group(function () {
             Route::patch('/{permission}/update', [PermissionController::class, 'update'])->name('permissions.update')->can('manage-permissions');
             Route::delete('/{permission}/delete', [PermissionController::class, 'destroy'])->name('permissions.destroy')->can('manage-permissions');
         });
+
+        Route::get('chat',[ChatController::class,'index'])->name('admin.chat.index');
+        Route::get('chat/{user}',[ChatController::class,'show'])->name('admin.chat.show');
+        Route::post('chat/{user}',[ChatController::class,'sendMessage'])->name('admin.chat.send');
 
         Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
     });
