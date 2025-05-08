@@ -1,11 +1,13 @@
 <?php
 include_once 'admin.php';
+use App\Http\Controllers\Intern\ChatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Intern\Auth\LoginController as InternLoginController;
 use App\Http\Controllers\Intern\Auth\RegisterController as InternRegisterController;
 use App\Http\Controllers\Intern\TaskController as InternTaskController;
 use App\Http\Controllers\Intern\HomeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Intern\ChatController as InternChatController;
 
 Route::middleware('guest:intern')->group(function () {
     Route::get('/register', [InternRegisterController::class,'showRegistrationForm'])->name('intern.register.form');
@@ -24,6 +26,10 @@ Route::middleware('auth:intern')->group(function () {
         Route::post('/{task}/comments', [CommentController::class, 'store'])->name('tasks.comments.store');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
+
+    Route::get('chat',[InternChatController::class,'index'])->name('intern.chat.index');
+    Route::get('chat/{user}',[InternChatController::class,'show'])->name('intern.chat.show');
+    Route::post('chat/{user}',[InternChatController::class,'sendMessage'])->name('intern.chat.send');
     
     Route::post('/logout', [InternLoginController::class, 'logout'])->name('intern.logout');
 });
