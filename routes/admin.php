@@ -78,7 +78,7 @@ Route::prefix('admin')->group(function () {
         Route::get('chat',[ChatController::class,'index'])->name('admin.chat.index');
         Route::get('chat/{user}',[ChatController::class,'show'])->name('admin.chat.show');
         Route::post('chat/{user}',[ChatController::class,'sendMessage'])->name('admin.chat.send');
-
+        
         Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
     });
 });

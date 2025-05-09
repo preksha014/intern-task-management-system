@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
-
+use App\Events\MessageSent;
+use Illuminate\Support\Facades\Log;
 class ChatController extends Controller
 {
     public function index()
@@ -21,21 +22,22 @@ class ChatController extends Controller
     {
         // Fetch messages between the authenticated user and the specified user
         $authId = auth()->id();
-        
+
+        $recipientId = $userId;
         $messages = Message::where(function ($query) use ($authId, $userId) {
             $query->where(function ($q) use ($authId, $userId) {
                 $q->where('sender_id', $authId)
-                  ->where('recipient_id', $userId);
+                    ->where('recipient_id', $userId);
             })->orWhere(function ($q) use ($authId, $userId) {
                 $q->where('sender_id', $userId)
-                  ->where('recipient_id', $authId);
+                    ->where('recipient_id', $authId);
             });
         })->with(['sender', 'recipient'])->orderBy('created_at', 'asc')->get();
 
         // Get the receiver user information
         $receiver = User::findOrFail($userId);
 
-        return view('admin.chat.show', compact('messages', 'receiver'));
+        return view('admin.chat.show', compact('messages', 'receiver', 'recipientId'));
     }
 
     public function sendMessage(Request $request, $userId)
@@ -44,17 +46,29 @@ class ChatController extends Controller
         $request->validate([
             'content' => 'required|string|max:255',
         ]);
+        //dd($request);
+        // Log::info($userId);
+        // Log::info(auth()->user()->id);
 
         // Create a new message
-        Message::create([
-            'sender_id' => auth()->id(),
+        $message = Message::create([
+            'sender_id' => auth('admin')->user()->id,  // Remove the parentheses
             'recipient_id' => $userId,
             'content' => $request->input('content'),
             'read' => false,
         ]);
 
-        return redirect()->route('admin.chat.show', ['user' => $userId]);
+        // Broadcast the message
+        broadcast(new MessageSent($message));
+
+        // Return a JSON response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message sent successfully.',
+            'data' => $message,
+        ]);
     }
+
     public function markAsRead($messageId)
     {
         // Mark the message as read

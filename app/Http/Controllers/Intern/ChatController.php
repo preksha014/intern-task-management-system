@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\User;
-
+use App\Events\MessageSent;
 class ChatController extends Controller
 {
     public function index()
@@ -21,21 +21,21 @@ class ChatController extends Controller
     {
         // Fetch messages between the authenticated user and the specified user
         $authId = auth()->id();
-        
+        $receiverId = $userId;
         $messages = Message::where(function ($query) use ($authId, $userId) {
             $query->where(function ($q) use ($authId, $userId) {
                 $q->where('sender_id', $authId)
-                  ->where('recipient_id', $userId);
+                    ->where('recipient_id', $userId);
             })->orWhere(function ($q) use ($authId, $userId) {
                 $q->where('sender_id', $userId)
-                  ->where('recipient_id', $authId);
+                    ->where('recipient_id', $authId);
             });
         })->with(['sender', 'recipient'])->orderBy('created_at', 'asc')->get();
-        
+
         // Get the receiver user information
         $receiver = User::findOrFail($userId);
 
-        return view('interns.chat.show', compact('messages', 'receiver'));
+        return view('interns.chat.show', compact('messages', 'receiver', 'receiverId'));
     }
 
     public function sendMessage(Request $request, $userId)
@@ -46,15 +46,24 @@ class ChatController extends Controller
         ]);
 
         // Create a new message
-        Message::create([
-            'sender_id' => auth()->id(),
-            'recipient_id' => $userId,
+        $message = Message::create([
+            'sender_id' => auth()->id(),  // Get the authenticated user's ID
+            'recipient_id' => $userId,    // The recipient's user ID
             'content' => $request->input('content'),
-            'read' => false,
+            'read' => false,  // Set the message as unread
         ]);
 
-        return redirect()->route('intern.chat.show', ['user' => $userId]);
+        // Broadcast the message
+        broadcast(new MessageSent($message));
+
+        // Return a JSON response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message sent successfully.',
+            'data' => $message,
+        ]);
     }
+
 
     public function markAsRead($messageId)
     {

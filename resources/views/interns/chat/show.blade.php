@@ -13,6 +13,7 @@
                     <a href="{{ route('intern.chat.index') }}" class="text-blue-500 hover:text-blue-700">Back to Chats</a>
                 </div>
             </div>
+
             <!-- Messages Container -->
             <div id="messages" class="h-96 overflow-y-auto p-4 space-y-4">
                 @foreach($messages as $message)
@@ -20,7 +21,7 @@
                         <div class="{{ $message->sender_id === auth()->id() ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black' }} rounded-lg px-4 py-2 max-w-sm">
                             <p class="text-sm">{{ $message->content }}</p>
                             <span class="text-xs block mt-1 {{ $message->sender_id === auth()->id() ? 'text-blue-100' : 'text-gray-500' }}">
-                                {{ $message->created_at->diffForHumans()}}
+                                {{ $message->created_at->diffForHumans() }}
                             </span>
                         </div>
                     </div>
@@ -38,9 +39,68 @@
         </div>
     </div>
 
-    <!-- Optional: Auto scroll to latest message -->
+    <!-- Scripts -->
     <script>
-        const messagesDiv = document.getElementById('messages');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        document.addEventListener('DOMContentLoaded', function () {
+            const senderId = {{ auth()->id() }};
+            const recipientId = {{ $receiver->id }};
+            const messagesDiv = document.getElementById('messages');
+            const form = document.getElementById('messageForm');
+            const contentInput = form.querySelector('input[name="content"]');
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const content = contentInput.value.trim();
+                if (!content) return;
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ content })
+                    });
+
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        const div = document.createElement('div');
+                        div.className = 'flex justify-end';
+                        div.innerHTML = `
+                            <div class="bg-blue-500 text-white rounded-lg px-4 py-2 max-w-sm">
+                                <p class="text-sm">${data.data.content}</p>
+                                <span class="text-xs block mt-1 text-blue-100">Just now</span>
+                            </div>
+                        `;
+                        messagesDiv.appendChild(div);
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        contentInput.value = '';
+                    } else {
+                        alert('Error sending message');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Something went wrong.');
+                }
+            });
+
+            // Listen to messages sent by the other user (admin)
+            Echo.channel(`chat.${recipientId}.${senderId}`)
+                .listen('.MessageSent', (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-start';
+                    div.innerHTML = `
+                        <div class="bg-gray-200 text-black rounded-lg px-4 py-2 max-w-sm">
+                            <p class="text-sm">${e.message.content}</p>
+                            <span class="text-xs block mt-1 text-gray-500">Just now</span>
+                        </div>
+                    `;
+                    messagesDiv.appendChild(div);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+        });
     </script>
 </x-app-layout>
