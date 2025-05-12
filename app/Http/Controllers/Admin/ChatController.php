@@ -42,6 +42,7 @@ class ChatController extends Controller
 
     public function sendMessage(Request $request, $userId)
     {
+        Log::info('In sendMessage');
         // Validate the request
         $request->validate([
             'content' => 'required|string|max:255',

@@ -26,10 +26,9 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         $validated = $request->validated();
+        $validated['created_by'] = Auth::id();
 
         $task = Task::create($validated);
-        $task['creator_id'] = Auth::id();
-
         $task->interns()->attach($validated['interns']);
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
