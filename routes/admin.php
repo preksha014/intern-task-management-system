@@ -42,7 +42,6 @@ Route::prefix('admin')->group(function () {
             Route::post('/create', [InternController::class, 'store'])->name('interns.store')->can('manage-interns');
             Route::get('/assign', [InternController::class, 'assign'])->name('interns.assign')->can('manage-interns');
             Route::post('/assign', [InternController::class, 'assignStore'])->name('interns.assign.store')->can('manage-interns');
-            Route::get('/{iterns}', [InternController::class, 'show'])->name('interns.show')->can('manage-interns');
             Route::get('/{intern}/edit', [InternController::class, 'edit'])->name('interns.edit')->can('manage-interns');
             Route::patch('/{intern}/update', [InternController::class, 'update'])->name('interns.update')->can('manage-interns');
             Route::delete('/{intern}/delete', [InternController::class, 'destroy'])->name('interns.destroy')->can('manage-interns');

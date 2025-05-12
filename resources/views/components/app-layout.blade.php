@@ -13,13 +13,13 @@
 <body class="font-sans antialiased bg-gray-100 h-screen">
     <div class="flex flex-col min-h-screen">
         <!-- Navigation Bar -->
-        <nav class="bg-white shadow-md border-b border-gray-200">
+        <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md border-b border-gray-200">
             <div class="max-w-full mx-auto px-6">
                 <div class="flex justify-between items-center h-16">
                     <!-- Left: App Logo -->
                     <div class="flex items-center space-x-2">
                         <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
-                            class="text-xl font-bold text-gray-800">
+                            class="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors duration-150">
                             Task Management System
                         </a>
                     </div>
@@ -42,9 +42,11 @@
         </nav>
 
         <!-- Page Content -->
-        <main class="flex-grow overflow-auto">
-            {{ $slot }}
-        </main>
+        <div class="pt-16">
+            <main class="flex-grow overflow-auto">
+                {{ $slot }}
+            </main>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>

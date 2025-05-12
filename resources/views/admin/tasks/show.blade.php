@@ -1,10 +1,20 @@
 <x-dashboard-layout>
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl">
                 <div class="p-6 bg-white border-b border-gray-200">
+                   <div class="flex justify-between items-center">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Task Details</h2>
 
+                        <div class="mb-6 justify-end">
+                            <a href="{{ route('tasks.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-200 transition-colors duration-200">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                Back to Tasks
+                            </a>
+                        </div>
+                    </div>
                     <div class="mb-4">
                         <h3 class="text-lg font-medium text-gray-700">Title:</h3>
                         <p class="text-gray-900 text-base">{{ $task->title }}</p>
@@ -35,7 +45,13 @@
                                 <textarea name="content" rows="3" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Add a comment..."></textarea>
                             </div>
                             <div class="flex justify-end">
-                                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <button
+                                    type="submit"
+                                    class="inline-flex items-center px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150"
+                                >
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    </svg>
                                     Post Comment
                                 </button>
                             </div>
@@ -66,12 +82,6 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
-
-                    <div class="mt-6">
-                        <a href="{{ route('tasks.index') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Back to Tasks
-                        </a>
                     </div>
                 </div>
             </div>

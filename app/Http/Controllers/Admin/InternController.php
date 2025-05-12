@@ -39,11 +39,6 @@ class InternController extends Controller
         return redirect()->route('interns.index')->with('success', 'Intern created successfully.');
     }
 
-    public function show(Intern $intern)
-    {
-        return view('admin.interns.show', compact('intern'));
-    }
-
     public function edit(Intern $intern)
     {
         return view('admin.interns.edit', compact('intern'));
