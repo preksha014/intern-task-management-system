@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\Intern;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\TaskRequest;
 
 class TaskController extends Controller
 {
@@ -23,23 +23,12 @@ class TaskController extends Controller
         return view('admin.tasks.create', compact('interns'));
     }
 
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'due_date' => 'required|date|after:today',
-            'status' => 'required|in:pending,in_progress,completed',
-            'interns' => 'required|array|exists:interns,id'
-        ]);
+        $validated = $request->validated();
 
-        $task = Task::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'due_date' => $validated['due_date'],
-            'status' => $validated['status'],
-            'created_by' => Auth::id(),
-        ]);
+        $task = Task::create($validated);
+        $task['creator_id'] = Auth::id();
 
         $task->interns()->attach($validated['interns']);
 
@@ -60,22 +49,11 @@ class TaskController extends Controller
         return view('admin.tasks.edit', compact('task', 'interns'));
     }
 
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'due_date' => 'required|date|after:today',
-            'status' => 'required|in:pending,in_progress,completed',
-            'interns' => 'required|array|exists:interns,id'
-        ]);
+        $validated = $request->validated();
 
-        $task->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'due_date' => $validated['due_date'],
-            'status' => $validated['status'],
-        ]);
+        $task->update($validated);
 
         $task->interns()->sync($validated['interns']);
 

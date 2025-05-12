@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Admin;
+use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisterController extends Controller
 {
@@ -15,17 +16,10 @@ class RegisterController extends Controller
         return view('admin.auth.register');
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         // Validate the request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email', // Check email uniqueness in users table
-            'password' => 'required|string|min:8|confirmed',
-            'department' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            // 'is_super_admin' => 'required|boolean',
-        ]);
+        $request->validated();
 
         // Create the user
         $user = User::create([
@@ -40,7 +34,6 @@ class RegisterController extends Controller
             'user_id' => $user->id,
             'department' => $request->department,
             'position' => $request->position,
-            // 'is_super_admin' => $request->is_super_admin,
         ]);
 
         return redirect()->route('admin.login.form')->with('success', 'Admin registered successfully.');

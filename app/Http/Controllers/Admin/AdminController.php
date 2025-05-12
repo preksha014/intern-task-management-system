@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\AdminRequest;
 
 class AdminController extends Controller
 {
@@ -23,17 +23,9 @@ class AdminController extends Controller
         return view('admin.admins.create', compact('roles'));
     }
 
-    public function store(Request $request)
+    public function store(AdminRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'department' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'roles' => 'required|array', // Ensure roles are provided
-            'roles.*' => 'exists:roles,id', // Validate each role ID exists
-        ]);
+        $request->validated();
 
         // Create the user
         $user = User::create([
@@ -58,30 +50,20 @@ class AdminController extends Controller
         return redirect()->route('admins.index')->with('success', 'Admin created successfully');
     }
 
-    public function show(Admin $admin)
-    {
-        return view('admin.admins.show', compact('admin'));
-    }
-
     public function edit(Admin $admin)
     {
         $roles = Role::all();
+        if ($admin->user->isSuperAdmin()) {
+            return redirect()->route('admins.index')->with('error', 'You cannot edit this admin');
+        }
         return view('admin.admins.edit', compact('admin', 'roles'));
     }
 
-    public function update(Request $request, Admin $admin)
+    public function update(AdminRequest $request, Admin $admin)
     {
         $user = User::findOrFail($admin->user_id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id, // Exclude current user's email
-            'password' => 'nullable|string|min:8',
-            'department' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-        ]);
+        $request->validated();
 
         // Update the user
         $user->update([
@@ -104,6 +86,9 @@ class AdminController extends Controller
 
     public function destroy(Admin $admin)
     {
+        if ($admin->user->isSuperAdmin()) {
+            return redirect()->route('admins.index')->with('error', 'You cannot delete this admin');
+        }
         $user = User::findOrFail($admin->user_id);
 
         // Detach roles from the user

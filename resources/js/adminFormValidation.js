@@ -1,6 +1,97 @@
 import $ from "jquery";
 import "jquery-validation";
 window.$ = window.jQuery = $;
+
+$("#register-form").validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3
+        },
+        email: {
+            required: true,
+            email: true
+        },
+        password: {
+            required: true,
+            minlength: 8
+        },
+        password_confirmation: {
+            required: true,
+            equalTo: "#password"
+        },
+        department: {
+            required: true
+        },
+        position: {
+            required: true
+        },
+    },
+    messages: {
+        name: {
+            required: "Please enter the full name",
+            minlength: "Name must be at least 3 characters"
+        },
+        email: {
+            required: "Please enter an email address",
+            email: "Please enter a valid email address"
+        },
+        password: {
+            required: "Please provide a password",
+            minlength: "Password must be at least 8 characters"
+        },
+        password_confirmation: {
+            required: "Please confirm the password",
+            equalTo: "Passwords do not match"
+        },
+        department: {
+            required: "Please enter the department"
+        },
+        position: {
+            required: "Please enter the position"
+        }
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    }
+});
+
+$("#login-form").validate({
+    rules: {
+        email: {
+            required: true,
+            email: true
+        },
+        password: {
+            required: true,
+            minlength: 8
+        }
+    },
+    messages: {
+        email: {
+            required: "Please enter an email address",
+            email: "Please enter a valid email address"
+        },
+        password: {
+            required: "Please provide a password",
+            minlength: "Password must be at least 8 characters"
+        }
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    }
+});
+
 $("#create-admin-form").validate({
     rules: {
         name: {
@@ -75,12 +166,6 @@ $("#edit-admin-form").validate({
         email: {
             required: true,
             email: true
-        },
-        password: {
-            minlength: 8
-        },
-        password_confirmation: {
-            equalTo: "#password"
         },
         department: {
             required: true
@@ -232,18 +317,18 @@ $("#edit-intern-form").validate({
 
 $("#assign-task-form").validate({
     rules: {
-        task: {
+        "task_id[]": {
             required: true
         },
-        intern: {
+        "intern_id": {
             required: true
-        },
+        }
     },
     messages: {
-        task: {
+        "task_id[]": {
             required: "Please select a task"
         },
-        intern: {
+        "intern_id": {
             required: "Please select an intern"
         }
     },
@@ -358,17 +443,174 @@ $("#edit-task-form").validate({
 
 $("#admin-comment-form").validate({
     rules: {
-        comment: {
+        content: {
             required: true,
             minlength: 3
         }
     },
     messages: {
-        comment: {
+        content: {
             required: "Please enter the comment",
             minlength: "Comment must be at least 3 characters"
         }
     },  
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    }
+})
+
+$("#create-role-form").validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3
+        },
+        description: {
+            required: true,
+            minlength: 10
+        },
+        "permissions[]": {
+            required: true
+        }
+    },
+    messages: {
+        name: {
+            required: "Please enter the role name",
+            minlength: "Role name must be at least 3 characters"
+        },
+        description: {
+            required: "Please enter the role description",
+            minlength: "Role description must be at least 10 characters"
+        },
+        "permissions[]": {
+            required: "Please select at least one permission"
+        }
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    },
+    errorPlacement: function (error, element) {
+        if (element.attr("name") === "permissions[]") {
+            error.insertAfter("#permissions-wrapper");
+        } else {
+            error.insertAfter(element);
+        }
+    }
+});
+
+$("#edit-role-form").validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3
+        },
+        description: {
+            required: true,
+            minlength: 10
+        },
+        "permissions[]": {
+            required: true
+        }
+    },
+    messages: {
+        name: {
+            required: "Please enter the role name",
+            minlength: "Role name must be at least 3 characters"
+        },
+        description: {
+            required: "Please enter the role description",
+            minlength: "Role description must be at least 10 characters"
+        },
+        "permissions[]": {
+            required: "Please select at least one permission"
+        }
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    },
+    errorPlacement: function (error, element) {
+        if (element.attr("name") === "permissions[]") {
+            error.insertAfter("#permissions-wrapper");
+        } else {
+            error.insertAfter(element);
+        }
+    }
+})
+
+$("#create-permission-form").validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3
+        },
+    },
+    messages: {
+        name: {
+            required: "Please enter the permission name",
+            minlength: "Permission name must be at least 3 characters"
+        },
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    }  
+})
+
+$("#edit-permission-form").validate({
+    rules: {
+        name: {
+            required: true,
+            minlength: 3
+        },
+    },
+    messages: {
+        name: {
+            required: "Please enter the permission name",
+            minlength: "Permission name must be at least 3 characters"
+        },
+    },
+    errorClass: "text-red-600 text-sm mt-1",
+    errorElement: "div",
+    highlight: function (element) {
+        $(element).addClass("border-red-500");
+    },
+    unhighlight: function (element) {
+        $(element).removeClass("border-red-500");
+    }  
+})
+
+$("#messageForm").validate({
+    rules: {
+        content: {
+            required: true,
+            minlength: 10
+        }
+    },
+    messages: {
+        content: {
+            required: "Please enter the message",
+            minlength: "Message must be at least 10 characters"
+        }
+    },
     errorClass: "text-red-600 text-sm mt-1",
     errorElement: "div",
     highlight: function (element) {

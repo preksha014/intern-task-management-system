@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Intern;
 use App\Models\User;
 use App\Models\Task;
+use App\Http\Requests\InternRequest;
 class InternController extends Controller
 {
     public function index()
@@ -20,13 +21,9 @@ class InternController extends Controller
         return view('admin.interns.create');
     }
 
-    public function store(Request $request)
+    public function store(InternRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $request->validated();
 
         $user = User::create([
             'name' => $request->name,
@@ -52,13 +49,9 @@ class InternController extends Controller
         return view('admin.interns.edit', compact('intern'));
     }
 
-    public function update(Request $request, Intern $intern)
+    public function update(InternRequest $request, Intern $intern)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $intern->user->id,
-            'department' => 'required|string|max:255',
-        ]);
+        $request->validated();
 
         $intern->user->update([
             'name' => $request->name,

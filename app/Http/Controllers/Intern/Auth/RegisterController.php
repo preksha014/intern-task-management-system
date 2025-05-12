@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Intern;
+use App\Http\Requests\Auth\RegisterRequest;
 class RegisterController extends Controller
 {
     //
@@ -14,15 +15,10 @@ class RegisterController extends Controller
     {
         return view('interns.auth.register');
     }
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         // Validate the request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email', // Check email uniqueness in users table
-            'password' => 'required|string|min:8|confirmed',
-            'department' => 'required|string|max:255',
-        ]);
+        $request->validated();
 
         // Create the user
         $user = User::create([

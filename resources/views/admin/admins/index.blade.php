@@ -58,28 +58,39 @@
                                             {{ $admin->position }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-gray-600">
-                                            @forelse ($admin->user->roles as $role)
+                                            @if ($admin->user->isSuperAdmin())
                                                 <span
                                                     class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
-                                                    {{ $role->name }}
+                                                    Super Admin
                                                 </span>
-                                            @empty
-                                                <span class="text-gray-500 italic">No roles assigned</span>
-                                            @endforelse
+                                            @else
+                                                @forelse ($admin->user->roles as $role)
+                                                    <span
+                                                        class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
+                                                        {{ $role->name }}
+                                                    </span>
+                                                @empty
+                                                    <span class="text-gray-500 italic">No roles assigned</span>
+                                                @endforelse
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <a href="{{ route('admins.edit', $admin) }}"
-                                                class="text-indigo-600 hover:text-indigo-800 font-medium mr-4 transition duration-200">Edit</a>
-                                            <form action="{{ route('admins.destroy', $admin) }}" method="POST"
-                                                class="inline-block"
-                                                onsubmit="return confirm('Are you sure you want to delete this admin?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="text-red-600 hover:text-red-800 font-medium transition duration-200">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            @if (!$admin->user->isSuperAdmin())
+                                                <a href="{{ route('admins.edit', $admin) }}"
+                                                    class="text-indigo-600 hover:text-indigo-800 font-medium mr-4 transition duration-200">Edit</a>
+                                                <form action="{{ route('admins.destroy', $admin) }}" method="POST"
+                                                    class="inline-block"
+                                                    onsubmit="return confirm('Are you sure you want to delete this admin?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-600 hover:text-red-800 font-medium transition duration-200">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="text-gray-500 italic">Actions not allowed</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

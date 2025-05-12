@@ -68,7 +68,7 @@
 
                     <!-- Comment Form -->
                     <div class="mt-8">
-                        <form action="{{ route('tasks.comments.store', $task) }}" method="POST">
+                        <form id="intern-comment-form" action="{{ route('tasks.comments.store', $task) }}" method="POST">
                             @csrf
                             <div class="mb-4">
                                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Add a comment</label>

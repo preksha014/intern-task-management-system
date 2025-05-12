@@ -45,8 +45,6 @@
             </div>
         </div>
     </div>
-
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const senderId = {{ auth()->id() }};
@@ -98,7 +96,6 @@
             // Laravel Echo (listener only, Echo is initialized in echo.js)
             Echo.channel(`chat.${recipientId}.${senderId}`)
                 .listen('.MessageSent', (e) => {
-                    console.log('preksha')
                     const div = document.createElement('div');
                     div.className = 'flex justify-start';
                     div.innerHTML = `
@@ -112,6 +109,4 @@
                 });
         });
     </script>
-
-
 </x-dashboard-layout>

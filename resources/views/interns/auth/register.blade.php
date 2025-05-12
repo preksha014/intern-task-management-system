@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('intern.register') }}" class="space-y-4 bg-white p-6 max-w-md mx-auto">
+    <form id="register-form" method="POST" action="{{ route('intern.register') }}" class="space-y-4 bg-white p-6 max-w-md mx-auto">
         @csrf
 
         <div class="space-y-1">

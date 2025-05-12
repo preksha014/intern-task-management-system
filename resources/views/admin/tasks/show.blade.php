@@ -29,7 +29,7 @@
                         <h3 class="text-xl font-semibold text-gray-800 mb-4">Comments</h3>
                         
                         <!-- Comment Form -->
-                        <form action="{{ route('tasks.comments.store', $task) }}" method="POST" class="mb-6">
+                        <form id="admin-comment-form" action="{{ route('tasks.comments.store', $task) }}" method="POST" class="mb-6">
                             @csrf
                             <div class="mb-4">
                                 <textarea name="content" rows="3" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Add a comment..."></textarea>

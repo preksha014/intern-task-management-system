@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Intern\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Auth\LoginRequest;
 
 class LoginController extends Controller
 {
@@ -13,13 +14,10 @@ class LoginController extends Controller
         return view('interns.auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         // Validate the request
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $request->validated();
 
         // Attempt to log the user in
         if (Auth::guard('intern')->attempt($request->only('email', 'password'))) {
