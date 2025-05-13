@@ -5,7 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+
+    <!-- Toastr CSS & JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <title>{{ config('app.name', 'Task Management System') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -48,8 +54,19 @@
             </main>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.5/jquery.validate.min.js"></script>
+    @if(session('success'))
+        <script>
+            $(document).ready(function () {
+                toastr.success("{{ session('success') }}");
+            });
+        </script>
+    @elseif(session('error'))  
+        <script>
+            $(document).ready(function () {
+                toastr.error("{{ session('error') }}");
+            });
+        </script>
+    @endif
 </body>
 
 </html>

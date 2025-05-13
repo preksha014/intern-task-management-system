@@ -21,15 +21,11 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'department' => 'required|string|max:255',
         ];
-        if ($this->routeIs('admin.register')) {
-            $rules['position'] = 'required|string|max:255';
-        }
-        return $rules;
     }
 }

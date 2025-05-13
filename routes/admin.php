@@ -14,9 +14,6 @@ use App\Http\Controllers\Admin\ChatController;
 Route::prefix('admin')->group(function () {
 
     Route::middleware("guest:admin")->group(function () {
-        Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('admin.register.form');
-        Route::post('/register', [RegisterController::class, 'register'])->name('admin.register');
-
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admin.login.form');
         Route::post('/login', [LoginController::class, 'login'])->name('admin.login');
     });

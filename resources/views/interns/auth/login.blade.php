@@ -4,12 +4,6 @@
         <p class="mt-2 text-sm text-gray-600">Welcome back! Please enter your credentials.</p>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 text-sm text-red-600">
-            {{ session('error') }}
-        </div>
-    @endif
-
     <form id="login-form" method="POST" action="{{ route('intern.login') }}" class="space-y-4 bg-white p-6 max-w-md mx-auto">
         @csrf
 
@@ -20,9 +14,6 @@
                     class="block w-full px-3 py-2 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm transition duration-150 ease-in-out"
                     autocomplete="email" placeholder="your.email@example.com">
             </div>
-            @error('email')
-                <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
-            @enderror
         </div>
 
         <div class="space-y-1">
