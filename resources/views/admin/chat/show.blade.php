@@ -63,66 +63,75 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function() {
             const senderId = {{ auth()->id() }};
             const recipientId = {{ $receiver->id }};
-            const messagesDiv = document.getElementById('messages');
-            const form = document.getElementById('messageForm');
-            const contentInput = form.querySelector('input[name="content"]');
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const $messagesDiv = $('#messages');
+            const $form = $('#messageForm');
+            const $contentInput = $form.find('input[name="content"]');
+            const token = $('meta[name="csrf-token"]').attr('content');
 
-            // Send Message via Fetch
-            form.addEventListener('submit', async function (e) {
+            // Scroll to bottom on initial load
+            $messagesDiv.scrollTop($messagesDiv[0].scrollHeight);
+
+            // Send Message via jQuery AJAX
+            $form.on('submit', function(e) {
                 e.preventDefault();
-                const content = contentInput.value.trim();
+                const content = $contentInput.val().trim();
                 if (!content) return;
 
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ content })
-                    });
-
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        const div = document.createElement('div');
-                        div.className = 'flex justify-end';
-                        div.innerHTML = `
-                        <div class="bg-blue-500 text-white rounded-lg px-4 py-2 max-w-sm">
-                            <p class="text-sm">${data.data.content}</p>
-                            <span class="text-xs block mt-1 text-blue-100">Just now</span>
-                        </div>
-                    `;
-                        messagesDiv.appendChild(div);
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        contentInput.value = '';
-                    } else {
-                        alert('Error sending message');
+                $.ajax({
+                    url: $form.attr('action'),
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({ content }),
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            const $newMessage = $('<div>').addClass('flex justify-end').html(`
+                                <div class="flex items-end space-x-2 max-w-[70%]">
+                                    <div class="bg-blue-600 text-white rounded-2xl px-4 py-2 shadow-sm">
+                                        <p class="text-sm">${data.data.content}</p>
+                                        <span class="text-xs block mt-1 text-blue-100">Just now</span>
+                                    </div>
+                                </div>
+                            `);
+                            $messagesDiv.append($newMessage);
+                            $messagesDiv.scrollTop($messagesDiv[0].scrollHeight);
+                            $contentInput.val('');
+                        } else {
+                            alert('Error sending message');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        alert('Something went wrong.');
                     }
-                } catch (error) {
-                    console.error(error);
-                    alert('Something went wrong.');
-                }
+                });
             });
 
+            // Listen for incoming messages
             window.Echo.channel(`chat.${recipientId}.${senderId}`)
-                .listen('.MessageSent', (e) => {
-                    const div = document.createElement('div');
-                    div.className = 'flex justify-start';
-                    div.innerHTML = `
-                    <div class="bg-gray-200 text-black rounded-lg px-4 py-2 max-w-sm">
-                        <p class="text-sm">${e.message.content}</p>
-                        <span class="text-xs block mt-1 text-gray-500">Just now</span>
-                    </div>
-                `;
-                    messagesDiv.appendChild(div);
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                .listen('.MessageSent', function(e) {
+                    console.log('Message received:', e);
+                    const $newMessage = $('<div>').addClass('flex justify-start').html(`
+                        <div class="flex items-end space-x-2 max-w-[70%]">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                                ${e.message.sender_initial || '?'}
+                            </div>
+                            <div class="bg-white text-gray-900 rounded-2xl px-4 py-2 shadow-sm">
+                                <p class="text-sm">${e.message.content}</p>
+                                <span class="text-xs block mt-1 text-gray-500">Just now</span>
+                            </div>
+                        </div>
+                    `);
+                    $messagesDiv.append($newMessage);
+                    $messagesDiv.scrollTop($messagesDiv[0].scrollHeight);
                 });
         });
     </script>

@@ -23,7 +23,7 @@ class Message extends Model
     // Sender relationship
     public function sender()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(User::class,  'sender_id');
     }
 
     // Recipient relationship
