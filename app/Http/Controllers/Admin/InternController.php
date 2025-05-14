@@ -10,15 +10,16 @@ use App\Models\Task;
 use App\Http\Requests\InternRequest;
 use App\Notifications\TaskAssigned;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-
-
 class InternController extends Controller
 {
     public function index()
     {
-        $interns = Intern::paginate(5);
-        return view('admin.interns.index', compact('interns'));
+        try {
+            $interns = Intern::paginate(5);
+            return view('admin.interns.index', compact('interns'));
+        } catch (\Exception $e) {
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
+        }
     }
 
     public function create()
@@ -28,20 +29,24 @@ class InternController extends Controller
 
     public function store(InternRequest $request)
     {
-        $request->validated();
+        try {
+            $request->validated();
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+            ]);
 
-        Intern::create([
-            'user_id' => $user->id,
-            'department' => $request->department,
-        ]);
+            Intern::create([
+                'user_id' => $user->id,
+                'department' => $request->department,
+            ]);
 
-        return redirect()->route('interns.index')->with('success', 'Intern created successfully.');
+            return redirect()->route('interns.index')->with('success', 'Intern created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
+        }
     }
 
     public function edit(Intern $intern)
@@ -51,59 +56,69 @@ class InternController extends Controller
 
     public function update(InternRequest $request, Intern $intern)
     {
-        $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $intern->user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+            $intern->user->update([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ]);
 
-        $intern->update([
-            'department' => $request->department,
-        ]);
+            $intern->update([
+                'department' => $validated['department'],
+            ]);
 
-        return redirect()->route('interns.index')->with('success', 'Intern updated successfully.');
+            return redirect()->route('interns.index')->with('success', 'Intern updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
+        }
     }
-
     public function destroy(Intern $intern)
     {
-        $user = $intern->user;
+        try {
+            $user = $intern->user;
 
-        $intern->delete();
-        $user->delete();
+            $intern->delete();
+            $user->delete();
 
-        return redirect()->route('interns.index')->with('success', 'Intern deleted successfully.');
+            return redirect()->route('interns.index')->with('success', 'Intern deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
+        }
+
     }
     public function assign()
     {
-        $tasks = Task::whereIn('status', ['pending', 'in_progress'])->get();
-        $interns = Intern::all();
-        return view('admin.interns.assign', compact('tasks', 'interns'));
+        try {
+            $tasks = Task::whereIn('status', ['pending', 'in_progress'])->get();
+            $interns = Intern::all();
+            return view('admin.interns.assign', compact('tasks', 'interns'));
+        } catch (\Exception $e) {
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
+        }
     }
 
     public function assignStore(Request $request)
     {
-        $validated = $request->validate([
-            'intern_id' => 'required|exists:interns,id',
-            'task_id' => 'required|array|min:1',
-            'task_id.*' => 'exists:tasks,id',
-        ]);
-
-        $assignedTasks = [];
-
-        foreach ($validated['task_id'] as $taskId) {
-            $task = Task::find($taskId);
-            $task->interns()->attach($validated['intern_id']);
-            $assignedTasks[] = $task;
+        try{
+            $validated = $request->validate([
+                'intern_id' => 'required|exists:interns,id',
+                'task_id' => 'required|array|min:1',
+                'task_id.*' => 'exists:tasks,id',
+            ]);
+    
+            $assignedTasks = [];
+    
+            foreach ($validated['task_id'] as $taskId) {
+                $task = Task::find($taskId);
+                $task->interns()->attach($validated['intern_id']);
+                $assignedTasks[] = $task;
+            }
+            $intern = Intern::find($request->intern_id);
+            $intern->notify(new TaskAssigned($assignedTasks, Auth::user()));
+            return redirect()->route('interns.index')->with('success', 'Tasks assigned successfully.');
+        }catch(\Exception $e){
+            return redirect()->route('interns.index')->with('error', 'Something went wrong');
         }
-
-        // dd($assignedTasks);
-        $intern=Intern::find($request->intern_id);
-
-        // @dd($user);
-        // @dd($intern);
-        Log::info("Before notify");
-        $intern->notify(new TaskAssigned($assignedTasks, Auth::user()));
-        return redirect()->route('interns.index')->with('success', 'Tasks assigned successfully.');
     }
 }

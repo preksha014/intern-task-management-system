@@ -18,56 +18,69 @@ class RoleController extends Controller
     public function create(): View
     {
         $permissions = Permission::all();
-        return view('admin.roles.create',compact('permissions'));
+        return view('admin.roles.create', compact('permissions'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles',
-            'description' => 'nullable|string|max:1000',
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,id'
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:roles',
+                'description' => 'nullable|string|max:1000',
+                'permissions' => 'array',
+                'permissions.*' => 'exists:permissions,id'
+            ]);
 
-        $role = Role::create([
-            'name' => $validated['name'],
-            'description' => $validated['description']
-        ]);
+            $role = Role::create([
+                'name' => $validated['name'],
+                'description' => $validated['description']
+            ]);
 
-        if ($request->has('permissions')) {
-            $role->permissions()->sync($request->permissions);
+            if ($request->has('permissions')) {
+                $role->permissions()->sync($request->permissions);
+            }
+
+            return redirect()->route('roles.index')
+                ->with('success', 'Role created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while creating the role.');
         }
 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role created successfully.');
     }
 
     public function edit(Role $role): View
     {
         $permissions = Permission::all();
-        return view('admin.roles.edit', compact('role','permissions'));
+        return view('admin.roles.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, Role $role)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'description' => 'nullable|string|max:1000',
-        ]);
-
-        $role->update($validated);
-
-        $role->permissions()->sync($request->permissions);
-        return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully.');
+        try{
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+                'description' => 'nullable|string|max:1000',
+            ]);
+    
+            $role->update($validated);
+    
+            $role->permissions()->sync($request->permissions);
+            return redirect()->route('roles.index')
+                ->with('success', 'Role updated successfully.');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error', 'An error occurred while updating the role.');
+        }  
     }
 
     public function destroy(Role $role)
     {
-        $role->delete();
-        $role->permissions()->detach(); 
-        return redirect()->route('roles.index')
-            ->with('success', 'Role deleted successfully.');
+        try{
+            $role->delete();
+            $role->permissions()->detach();
+            return redirect()->route('roles.index')
+                ->with('success', 'Role deleted successfully.');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error', 'An error occurred while deleting the role.');
+        }
     }
 }

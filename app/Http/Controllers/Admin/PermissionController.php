@@ -11,7 +11,7 @@ class PermissionController extends Controller
 {
     public function index(): View
     {
-        $permissions = Permission::all();
+        $permissions = Permission::paginate(5);
         return view('admin.permissions.index', compact('permissions'));
     }
 
@@ -22,15 +22,19 @@ class PermissionController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:permissions',
-            'slug' => 'required',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:permissions',
+                'slug' => 'required',
+            ]);
 
-        Permission::create($validated);
+            Permission::create($validated);
 
-        return redirect()->route('permissions.index')
-            ->with('success', 'Permission created successfully.');
+            return redirect()->route('permissions.index')
+                ->with('success', 'Permission created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while creating the permission.');
+        }
     }
 
     public function edit(Permission $permission): View
@@ -40,22 +44,30 @@ class PermissionController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name',
-            'slug' => 'required',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255|unique:permissions,name',
+                'slug' => 'required',
+            ]);
 
-        $permission->update($validated);
+            $permission->update($validated);
 
-        return redirect()->route('permissions.index')
-            ->with('success', 'Permission updated successfully.');
+            return redirect()->route('permissions.index')
+                ->with('success', 'Permission updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while updating the permission.');
+        }
     }
 
     public function destroy(Permission $permission)
     {
-        $permission->delete();
+        try {
+            $permission->delete();
 
-        return redirect()->route('permissions.index')
-            ->with('success', 'Permission deleted successfully.');
+            return redirect()->route('permissions.index')
+                ->with('success', 'Permission deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while deleting the permission.');
+        }
     }
 }

@@ -47,7 +47,6 @@ class NotificationController extends Controller
 
     public function destroyAll()
     {
-        dd('delete all');
         $intern = Intern::where('user_id', auth()->id())->first();
         $intern->notifications()->delete();
         return back()->with('success', 'All notifications deleted successfully.');

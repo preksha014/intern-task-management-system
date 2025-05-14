@@ -25,20 +25,25 @@ class TaskController extends Controller
 
     public function store(TaskRequest $request)
     {
-        $validated = $request->validated();
-        $validated['created_by'] = Auth::id();
+        try {
+            $validated = $request->validated();
 
-        $task = Task::create($validated);
-        $task->interns()->attach($validated['interns']);
+            $validated['created_by'] = Auth::id();
 
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+            $task = Task::create($validated);
+            $task->interns()->attach($validated['interns']);
+
+            return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('tasks.index')->with('error', 'Task not created successfully.');
+        }
     }
 
     public function show(Task $task)
     {
         $task->load(['creator', 'interns']);
-        $roles=Auth::user()->roles;
-        return view('admin.tasks.show', compact('task','roles'));
+        $roles = Auth::user()->roles;
+        return view('admin.tasks.show', compact('task', 'roles'));
     }
 
     public function edit(Task $task)
@@ -50,18 +55,26 @@ class TaskController extends Controller
 
     public function update(TaskRequest $request, Task $task)
     {
-        $validated = $request->validated();
+        try{
+            $validated = $request->validated();
 
-        $task->update($validated);
-
-        $task->interns()->sync($validated['interns']);
-
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+            $task->update($validated);
+    
+            $task->interns()->sync($validated['interns']);
+    
+            return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+        }catch(\Exception $e){
+            return redirect()->route('tasks.index')->with('error', 'Task not updated successfully.');
+        }
     }
 
     public function destroy(Task $task)
     {
-        $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+        try{
+            $task->delete();
+            return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+        }catch(\Exception $e){
+            return redirect()->route('tasks.index')->with('error', 'Task not deleted successfully.');
+        }
     }
 }

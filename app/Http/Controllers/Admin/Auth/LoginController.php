@@ -15,24 +15,30 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
+        try {
+            $credentials = $request->validated();
 
-        if (Auth::guard('admin')->attempt($credentials)) {
-            if (Auth::guard('admin')->user()->role === 'admin') {
-                return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
+            if (Auth::guard('admin')->attempt($credentials)) {
+                if (Auth::guard('admin')->user()->role === 'admin') {
+                    return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
+                }
+                Auth::guard('admin')->logout();
+                return redirect()->back()->withErrors(['email' => 'You are not an admin.']);
             }
-            Auth::guard('admin')->logout();
-            return redirect()->back()->withErrors(['email' => 'You are not an admin.']);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['email' => 'Invalid credentials.']);
         }
-
-        return redirect()->back()->withErrors(['email' => 'Invalid credentials.']);
     }
 
     public function logout(Request $request)
     {
-        if (Auth::guard('admin')->check()) {
-            Auth::guard('admin')->logout();
+        try {
+            if (Auth::guard('admin')->check()) {
+                Auth::guard('admin')->logout();
+            }
+            return redirect()->route('admin.login')->with('status', 'Logged out successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors('error', 'Something went wrong.');
         }
-        return redirect()->route('admin.login')->with('status', 'Logged out successfully.');
     }
 }

@@ -19,58 +19,60 @@ class ChatController extends Controller
 
     public function show($userId)
     {
-        // Fetch messages between the authenticated user and the specified user
-        $authId = auth()->id();
-        $receiverId = $userId;
-        $messages = Message::where(function ($query) use ($authId, $userId) {
-            $query->where(function ($q) use ($authId, $userId) {
-                $q->where('sender_id', $authId)
-                    ->where('recipient_id', $userId);
-            })->orWhere(function ($q) use ($authId, $userId) {
-                $q->where('sender_id', $userId)
-                    ->where('recipient_id', $authId);
-            });
-        })->with(['sender', 'recipient'])->orderBy('created_at', 'asc')->get();
+        try {
+            // Fetch messages between the authenticated user and the specified user
+            $authId = auth()->id();
+            $receiverId = $userId;
 
-        // Get the receiver user information
-        $receiver = User::findOrFail($userId);
+            $messages = Message::where(function ($query) use ($authId, $userId) {
+                $query->where(function ($q) use ($authId, $userId) {
+                    $q->where('sender_id', $authId)
+                        ->where('recipient_id', $userId);
+                })->orWhere(function ($q) use ($authId, $userId) {
+                    $q->where('sender_id', $userId)
+                        ->where('recipient_id', $authId);
+                });
+            })->with(['sender', 'recipient'])->orderBy('created_at', 'asc')->get();
 
-        return view('interns.chat.show', compact('messages', 'receiver', 'receiverId'));
+            // Get the receiver user information
+            $receiver = User::findOrFail($userId);
+
+            return view('interns.chat.show', compact('messages', 'receiver', 'receiverId'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred while fetching the chat.');
+        }
     }
 
     public function sendMessage(Request $request, $userId)
     {
-        // Validate the request
-        $request->validate([
-            'content' => 'required|string|max:255',
-        ]);
+        try {
+            // Validate the request
+            $request->validate([
+                'content' => 'required|string|max:255',
+            ]);
 
-        // Create a new message
-        $message = Message::create([
-            'sender_id' => auth()->id(),  // Get the authenticated user's ID
-            'recipient_id' => $userId,    // The recipient's user ID
-            'content' => $request->input('content'),
-            'read' => false,  // Set the message as unread
-        ]);
+            // Create a new message
+            $message = Message::create([
+                'sender_id' => auth()->id(),  // Get the authenticated user's ID
+                'recipient_id' => $userId,    // The recipient's user ID
+                'content' => $request->input('content'),
+                'read' => false,  // Set the message as unread
+            ]);
 
-        // Broadcast the message
-        broadcast(new MessageSent($message));
+            // Broadcast the message
+            broadcast(new MessageSent($message));
 
-        // Return a JSON response
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Message sent successfully.',
-            'data' => $message,
-        ]);
-    }
-
-
-    public function markAsRead($messageId)
-    {
-        // Mark the message as read
-        $message = Message::findOrFail($messageId);
-        $message->update(['read' => true]);
-
-        return response()->json(['success' => true]);
+            // Return a JSON response
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Message sent successfully.',
+                'data' => $message,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

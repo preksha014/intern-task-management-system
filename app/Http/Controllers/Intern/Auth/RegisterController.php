@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Intern\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Intern;
@@ -17,23 +16,27 @@ class RegisterController extends Controller
     }
     public function register(RegisterRequest $request)
     {
-        // Validate the request
-        $request->validated();
+        try {
+            // Validate the request
+            $validated=$request->validated();
 
-        // Create the user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'intern',
-        ]);
+            // Create the user
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'intern',
+            ]);
 
-        // Create the corresponding intern record
-        Intern::create([
-            'user_id' => $user->id,
-            'department' => $request->department,
-        ]);
+            // Create the corresponding intern record
+            Intern::create([
+                'user_id' => $user->id,
+                'department' => $validated['department'],
+            ]);
 
-        return redirect()->route('intern.login.form')->with('success', 'Intern registered successfully.');
+            return redirect()->route('intern.login.form')->with('success', 'Intern registered successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('intern.register.form')->with('error', 'An error occurred during registration.');
+        }
     }
 }
