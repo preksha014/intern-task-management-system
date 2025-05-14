@@ -84,11 +84,13 @@
                                         </td>
                                         <td class="px-6 py-5 whitespace-nowrap">
                                             <div class="flex flex-wrap gap-2">
-                                                @foreach ($intern->tasks as $task)
-                                                    <span class="px-3 py-1 text-xs font-medium">
+                                                @forelse ($intern->tasks as $task)
+                                                    <span class="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
                                                         {{ $task->title }}
                                                     </span>
-                                                @endforeach
+                                                @empty
+                                                    <span class="text-xs text-gray-500 italic">No tasks assigned</span>
+                                                @endforelse
                                             </div>
                                         </td>
 
@@ -182,6 +184,5 @@
     </div>
     @push('scripts')
         <script src="modal.js"></script>
-
     @endpush
 </x-dashboard-layout>

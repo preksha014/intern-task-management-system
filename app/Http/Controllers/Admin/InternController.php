@@ -36,6 +36,7 @@ class InternController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
+                'role' => 'intern',
             ]);
 
             Intern::create([
@@ -100,24 +101,42 @@ class InternController extends Controller
 
     public function assignStore(Request $request)
     {
-        try{
+        try {
             $validated = $request->validate([
                 'intern_id' => 'required|exists:interns,id',
                 'task_id' => 'required|array|min:1',
                 'task_id.*' => 'exists:tasks,id',
             ]);
-    
+
+            $intern = Intern::find($validated['intern_id']);
             $assignedTasks = [];
-    
+            $duplicateTasks = [];
+
             foreach ($validated['task_id'] as $taskId) {
                 $task = Task::find($taskId);
-                $task->interns()->attach($validated['intern_id']);
-                $assignedTasks[] = $task;
+
+                // Check if task is already assigned to this intern
+                if (!$intern->tasks()->where('task_id', $taskId)->exists()) {
+                    $task->interns()->attach($validated['intern_id']);
+                    $assignedTasks[] = $task;
+                } else {
+                    $duplicateTasks[] = $task->title;
+                }
             }
-            $intern = Intern::find($request->intern_id);
-            $intern->notify(new TaskAssigned($assignedTasks, Auth::user()));
-            return redirect()->route('interns.index')->with('success', 'Tasks assigned successfully.');
-        }catch(\Exception $e){
+
+            if (count($assignedTasks) > 0) {
+                $intern->notify(new TaskAssigned($assignedTasks, Auth::user()));
+                $message = 'Tasks assigned successfully.';
+
+                if (count($duplicateTasks) > 0) {
+                    $message .= ' Some tasks were skipped as they were already assigned: ' . implode(', ', $duplicateTasks);
+                }
+
+                return redirect()->route('interns.index')->with('success', $message);
+            }
+
+            return redirect()->route('interns.index')->with('error', 'All selected tasks are already assigned to this intern.');
+        } catch (\Exception $e) {
             return redirect()->route('interns.index')->with('error', 'Something went wrong');
         }
     }
