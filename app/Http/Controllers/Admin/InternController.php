@@ -8,6 +8,11 @@ use App\Models\Intern;
 use App\Models\User;
 use App\Models\Task;
 use App\Http\Requests\InternRequest;
+use App\Notifications\TaskAssigned;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
+
 class InternController extends Controller
 {
     public function index()
@@ -84,11 +89,21 @@ class InternController extends Controller
             'task_id.*' => 'exists:tasks,id',
         ]);
 
+        $assignedTasks = [];
+
         foreach ($validated['task_id'] as $taskId) {
             $task = Task::find($taskId);
             $task->interns()->attach($validated['intern_id']);
+            $assignedTasks[] = $task;
         }
 
+        // dd($assignedTasks);
+        $intern=Intern::find($request->intern_id);
+
+        // @dd($user);
+        // @dd($intern);
+        Log::info("Before notify");
+        $intern->notify(new TaskAssigned($assignedTasks, Auth::user()));
         return redirect()->route('interns.index')->with('success', 'Tasks assigned successfully.');
     }
 }

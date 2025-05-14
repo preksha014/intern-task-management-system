@@ -47,6 +47,9 @@
                                         Department</th>
                                     <th scope="col"
                                         class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Assinged Tasks</th>
+                                    <th scope="col"
+                                        class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
@@ -79,6 +82,16 @@
                                                 {{ $intern->department }}
                                             </span>
                                         </td>
+                                        <td class="px-6 py-5 whitespace-nowrap">
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach ($intern->tasks as $task)
+                                                    <span class="px-3 py-1 text-xs font-medium">
+                                                        {{ $task->title }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </td>
+
                                         <td class="px-6 py-5 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-4">
                                                 <a href="{{ route('interns.edit', $intern) }}"

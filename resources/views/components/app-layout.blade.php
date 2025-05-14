@@ -34,6 +34,25 @@
                     <div class="flex items-center space-x-6">
                         @auth
                             <span class="text-gray-700 font-medium">{{ auth()->user()->name }}</span>
+                            @if(auth()->user()->role === 'intern')
+                                <div class="relative inline-block">
+                                    <a href="{{ route('notifications.index') }}" class="flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="h-6 w-6">
+                                            <!-- Bell -->
+                                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                        </svg>
+                                        @if(Auth::user()->intern->unreadNotifications->count() > 0)
+                                            <span
+                                                class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                                {{ Auth::user()->intern->unreadNotifications->count() }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                </div>
+                            @endif
                             <form method="POST"
                                 action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('intern.logout') }}">
                                 @csrf
@@ -60,7 +79,7 @@
                 toastr.success("{{ session('success') }}");
             });
         </script>
-    @elseif(session('error'))  
+    @elseif(session('error'))
         <script>
             $(document).ready(function () {
                 toastr.error("{{ session('error') }}");

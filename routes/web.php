@@ -8,6 +8,7 @@ use App\Http\Controllers\Intern\TaskController as InternTaskController;
 use App\Http\Controllers\Intern\HomeController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Intern\ChatController as InternChatController;
+use App\Http\Controllers\NotificationController;
 
 Route::middleware('guest:intern')->group(function () {
     Route::get('/register', [InternRegisterController::class,'showRegistrationForm'])->name('intern.register.form');
@@ -32,5 +33,14 @@ Route::middleware('auth:intern')->group(function () {
     Route::get('chat/{user}',[InternChatController::class,'show'])->name('intern.chat.show');
     Route::post('chat/{user}',[InternChatController::class,'sendMessage'])->name('intern.chat.send');
     
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class,'index'])->name('notifications.index');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+        Route::delete('/delete-all', [NotificationController::class,'destroyAll'])->name('notifications.destroyAll');
+        Route::delete('/{id}', [NotificationController::class,'destroy'])->name('notifications.destroy');
+        
+    });
+
     Route::post('/logout', [InternLoginController::class, 'logout'])->name('intern.logout');
 });
