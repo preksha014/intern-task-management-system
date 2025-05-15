@@ -24,7 +24,7 @@
                 <div class="flex justify-between items-center h-16">
                     <!-- Left: App Logo -->
                     <div class="flex items-center space-x-2">
-                        <a href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
+                        <a href="{{ auth()->check() ? (auth()->user()->isAdmin() ? route('admin.dashboard') : route('intern.dashboard')) : '/' }}"
                             class="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors duration-150">
                             Task Management System
                         </a>
@@ -34,19 +34,20 @@
                     <div class="flex items-center space-x-6">
                         @auth
                             <span class="text-gray-700 font-medium">{{ auth()->user()->name }}</span>
-                            @if(auth()->user()->role === 'intern')
-                                <div class="relative inline-block">
-                                    <a href="{{ route('notifications.index') }}" class="flex items-center">
+                            <!-- Enhanced Notification Icon -->
+                            @if(auth()->user()->isIntern())
+                                <div class="relative inline-block mr-2">
+                                    <a href="{{ route('notifications.index') }}"
+                                        class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-150 text-gray-700 hover:text-blue-600">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="h-6 w-6">
-                                            <!-- Bell -->
+                                            stroke-linejoin="round" class="h-5 w-5">
                                             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                         </svg>
                                         @if(Auth::user()->intern->unreadNotifications->count() > 0)
                                             <span
-                                                class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                                class="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full shadow-sm border border-white">
                                                 {{ Auth::user()->intern->unreadNotifications->count() }}
                                             </span>
                                         @endif
@@ -54,7 +55,7 @@
                                 </div>
                             @endif
                             <form method="POST"
-                                action="{{ auth()->user()->role === 'admin' ? route('admin.logout') : route('intern.logout') }}">
+                                action="{{ auth()->user()->isAdmin() ? route('admin.logout') : route('intern.logout') }}">
                                 @csrf
                                 <button type="submit" class="text-red-600 hover:text-red-800 font-medium transition">
                                     Logout

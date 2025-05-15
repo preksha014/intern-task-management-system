@@ -18,7 +18,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/login', [LoginController::class, 'login'])->name('admin.login');
     });
 
-    Route::middleware(['auth:admin'])->group(function () {
+    Route::middleware(['auth:admin','permissions'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::prefix('tasks')->group(function () {

@@ -3,12 +3,6 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-lg sm:rounded-lg overflow-hidden">
                 <div class="p-8">
-                    @if (session('status'))
-                        <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-sm">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
                     <!-- Welcome Card -->
                     <div class="bg-blue-100 rounded-xl shadow-sm p-6 mb-8 border border-blue-200">
                         <div class="flex items-center">

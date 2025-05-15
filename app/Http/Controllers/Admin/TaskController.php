@@ -41,7 +41,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $task->load(['creator', 'interns']);
+        $task->load(['creator']);
         $roles = Auth::user()->roles;
         return view('admin.tasks.show', compact('task', 'roles'));
     }
